@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Tax Calculation Result</title>
+    <style>
+        body { font-family: Arial; background-color: #f0f8ff; padding: 20px; }
+        table { border-collapse: collapse; width: 50%; margin-top: 20px; }
+        th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+        th { background-color: #4CAF50; color: white; }
+        tr:nth-child(even) { background-color: #f2f2f2; }
+    </style>
+</head>
+<body>
+    <h1>Tax Calculation Result</h1>
+    <table>
+        <tr><th>Field</th><th>Value</th></tr>
+        <tr><td>Firm Name</td><td>{{ firm_name }}</td></tr>
+        <tr><td>Net Profit</td><td>{{ "%.2f"|format(net_profit) }} UGX</td></tr>
+        <tr><td>Tax Rate</td><td>{{ "%.2f"|format(tax_rate) }} %</td></tr>
+        <tr><td>Tax Payable</td><td>{{ "%.2f"|format(tax_amount) }} UGX</td></tr>
+    </table>
+    <br>
+    <a href="/">Go Back</a> | <a href="/records">View All Records</a>
+</body>
+</html>

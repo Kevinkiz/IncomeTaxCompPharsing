@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+
+<html>
+
+
+<head>
+  
+<title>Income Tax Computation</title>
+
+<style>
+    body {
+      background-color: lightblue;
+    }
+ 
+   table{
+      background-color:Orange;
+    }
+   
+</style>
+</head>
+
+
+<body>
+  
+<h1>Income Tax Computation</h1>
+
+
+<form id="myForm" action="/compute" method="POST">
+
+  <td>Name</td>
+           
+<td>
+          <input type="text" id="Name-input" name="FirmName" value="N/A">
+</td>
+      
+
+   
+</tr>
+    <tr>
+ 
+<td>Date</td>
+           
+<td>
+          <input type="date" id="Date/Period" name="Date_Period" value="N/A">
+</td>
+      
+
+   
+</tr>
+    <tr>  
+  
+<table border =1 >
+   
+ <tr>
+      
+<th>DETAILS</th>
+      
+<th>AMOUNT (UGX)</th>
+      
+<th>Net AMOUNT (UGX)</th>
+      
+<th>Tax Treatment</th>
+    
+</tr>
+    
+<tr>
+      
+<td>1. Net Profit Before Tax</td>
+  
+            
+ <td>
+
+   <input type="number" id="net-profit-input" name="net_profit" value="0" step="0.01">
+
+</td>
+                                       
+<td>
+   <input type="number" id="net-profit2-input" name="net_profit2" value="0" step="0.01" readonly>
+</td>
+      
+<td>Taxable</td>
+    
+</tr>
+    
+<tr style="background-color: pink;">    
+<td>Add: Non Allowable Deductions</td>
+      
+<td></td>
+     
+ <td></td>
+      
+<td></td>
+    
+</tr>
+  
+<tr style="background-color: pink;">
+<td>2. Depreciation</td>
+      
+<td>
+<input type="number" id="Depreciation-input" name="Depreciation" value="0" step="0.01">
+</td>
+     
+ <td>00</td>
+      
+<td>Taxable</td>
+    
+</tr>
+ 
+<tr style="background-color: pink;">
+<td>3. Bribes</td>
+      
+<td>
+<input type="number" id="Bribes-input" name="Bribes" value="0" step="0.01">
+</td>
+     
+ <td>00</td>
+      
+<td>Taxable</td>
+    
+</tr>
+ 
+<tr style="background-color: pink;">
+<td>4. Penalties</td>
+      
+<td>
+<input type="number" id="Penalties-input" name="Penalties" value="0" step="0.01">
+</td>
+     
+ <td>00</td>
+      
+<td>Taxable</td>
+    
+</tr>
+
+<tr style="background-color: pink;">
+<td>5. Gifts & Offers</td>
+      
+<td>
+<input type="number" id="GiftsAndOffers-input" name="Gifts & Offers" value="0" step="0.01">
+</td>
+     
+ <td>00</td>
+      
+<td>Taxable</td>
+    
+</tr>
+  
+<tr style="background-color: pink;">
+<td>6. Donations</td>
+      
+<td>
+<input type="number" id="Donations-input" name="Donations" value="0" step="0.01">
+</td>
+     
+ <td>00</td>
+      
+<td>Taxable</td>
+    
+</tr>
+
+<tr style="background-color: pink;">
+<td>7. Others</td>
+      
+<td>
+<input type="number" id="Others-input" name="Others" value="0" step="0.01">
+</td>
+     
+ <td>00</td>
+      
+<td>Taxable</td>
+    
+</tr>
+
+<tr style="background-color: pink;">
+<td>Total Non Allowable Deductions</td>
+      
+<td>
+00</td>
+     
+ <td>
+<input type="number" id="TotalNonAllowableDeductions-input" name="Total Non Allowable Deductions" value="0" step="0.01" readonly>
+</td>
+      
+<td></td>
+    
+</tr>
+
+<td>8. Adjusted Net Profit Before Tax</td>
+      
+<td>00</td>
+     
+ <td>
+<input type="number" id="AdjustedNetProfitBeforeTax-input" name="Adjusted Net Profit Before Tax" autocomplete="on" oninput="calculateChargeableIncome()" value="0" step="0.01" readonly/>
+</td>
+      
+<td></td>
+    
+</tr>
+
+<tr style="background-color: lightgreen;">
+<td>Less:Allowable Deductions</td>
+      
+<td></td>
+     
+ <td></td>
+      
+<td></td>
+    
+</tr>
+
+<tr style="background-color: lightgreen;">
+<td>9. Wear & Tear</td>
+      
+<td>
+<input type="number" id="TotalWearAndTear2-input" name="Total Wear & Tear2" value="0" step="0.01" readonly>
+
+</td>
+     
+ <td>
+<input type="button" value="TotalWearAndTear2" onclick="document.getElementById('TotalWearAndTear2-input').value = (parseFloat(document.getElementById('Computers,Data & Software-input').value)*0.4) + (parseFloat(document.getElementById('Plant & Machinery(Farming,Mining,Manufacture)-input').value)*0.3) + (parseFloat(document.getElementById('Automobiles<=60Million-input').value)*0.2) + (parseFloat(document.getElementById('Others not in any Class-input').value)*0.2);">
+</td>
+      
+<td>Non Taxable</td>
+   
+</tr>
+<td>
+<Wear & Tear-table>
+  
+ <tr>
+  
+<tr style="background-color: yellow;">     
+<th>DETAILS</th>
+      
+<th>40%</th>
+      
+<th>30%</th>
+      
+<th>20%</th>
+ 
+<th>Total</th>       
+</td>
+</tr>
+<tr>
+  
+<tr style="background-color: yellow;">     
+<td>i. Computers,Data & Software</td>
+                                                       
+<td>
+          <input type="number" id="Computers,Data & Software-input" name="Computers,Data & Software" value="0" step="0.01">
+</td>
+   
+<td><input type="button" value="Calculate Computer Wear & Tear" onclick="document.getElementById('Calculate Computer Wear & Tear-input').value = (parseFloat(document.getElementById('Computers,Data & Software-input').value)*0.4);">
+</td>
+<td>Non Taxable</td>
+<td>
+<input type="number" id="Calculate Computer Wear & Tear-input" name="Calculate Computer Wear & Tear" value="0" step="0.01" readonly>
+</td>       
+</tr>
+    <tr>
+
+<tr>
+ 
+<tr style="background-color: yellow;">      
+<td>ii. Plant & Machinery(Farming,Mining,Manufacture)</td>
+ 
+<td>Non Taxable</td>                                                      
+<td>
+          <input type="number" id="Plant & Machinery(Farming,Mining,Manufacture)-input" name="Plant & Machinery(Farming,Mining,Manufacture)" value="0" step="0.01">
+</td>
+   
+<td><input type="button" value="Calculate Plant Wear & Tear" onclick="document.getElementById('Calculate Plant Wear & Tear-input').value = (parseFloat(document.getElementById('Plant & Machinery(Farming,Mining,Manufacture)-input').value)*0.3);">
+</td>
+
+<td>
+<input type="number" id="Calculate Plant Wear & Tear-input" name="Calculate Plant Wear & Tear" value="0" step="0.01" readonly>
+
+</td>       
+</tr>
+    <tr>
+ 
+<tr>
+  
+<tr style="background-color: yellow;">     
+<td>iii. Automobiles<=60Million</td>
+
+<td>Non Taxable</td>
+<td><input type="button" value="Calculate Automobile Wear & Tear" onclick="document.getElementById('Calculate Automobile Wear & Tear-input').value = (parseFloat(document.getElementById('Automobiles<=60Million-input').value)*0.2);">
+</td>                                                       
+<td>
+          <input type="number" id="Automobiles<=60Million-input" name="Automobiles<=60Million" value="0" max="60000000" step="0.01">
+</td>
+   
+
+<td>
+<input type="number" id="Calculate Automobile Wear & Tear-input" name="Calculate Automobile Wear & Tear" value="0" step="0.01" readonly>
+
+</td> 
+<tr>
+ 
+<tr style="background-color: yellow;">      
+<td>iv. Others not in any Class</td>
+
+<td>Non Taxable</td>
+<td><input type="button" value="Calculate Others Wear & Tear" onclick="document.getElementById('Calculate Others Wear & Tear-input').value = (parseFloat(document.getElementById('Others not in any Class-input').value)*0.2);">
+</td>                                                       
+<td>
+          <input type="number" id="Others not in any Class-input" name="Others not in any Class" value="0" step="0.01">
+</td>
+   
+
+<td>
+<input type="number" id="Calculate Others Wear & Tear-input" name="Calculate Others Wear & Tear" value="0" step="0.01" readonly>
+
+</td> 
+<tr>
+ 
+<tr style="background-color: yellow;">      
+<td>v. Total Wear & Tear</td>
+
+<td>
+<input type="button" value="TotalWearAndTear" onclick="document.getElementById('TotalWearAndTear-input').value = (parseFloat(document.getElementById('Computers,Data & Software-input').value)*0.4) + (parseFloat(document.getElementById('Plant & Machinery(Farming,Mining,Manufacture)-input').value)*0.3) + (parseFloat(document.getElementById('Automobiles<=60Million-input').value)*0.2) + (parseFloat(document.getElementById('Others not in any Class-input').value)*0.2);">
+</td>
+<td>00</td> 
+<td>00</td>                                                      
+<td>
+          <input type="number" id="TotalWearAndTear-input" name="Total Wear & Tear" value="0" step="0.01" readonly>
+</td>
+   
+      
+</tr>
+    <tr>
+
+</tr>
+<tr style="background-color: lightgreen;">
+<td>10. 25% Start up Costs</td>
+      
+<td>
+<input type="number" id="25%StartupCosts-input" name="25% Start up Costs" value="0" step="0.01">
+</td>
+     
+ <td>00</td>
+      
+<td>Non Taxable</td>
+    
+</tr>
+
+<tr style="background-color: lightgreen;">
+<td>11. 5% Industrial Building Deduction</td>
+      
+<td>
+<input type="number" id="5%IndustrialBuildingDeduction-input" name="5% Industrial Building Deduction" value="0" step="0.01">
+</td>
+     
+ <td>00</td>
+      
+<td>Non Taxable</td>
+    
+</tr>
+
+<tr style="background-color: lightgreen;">
+<td>12. 20% Initial Building Allowance</td>
+      
+<td>
+<input type="number" id="20%InitialBuildingAllowance-input" name="20% Initial Building Allowance" value="0" step="0.01">
+</td>
+     
+ <td>00</td>
+      
+<td>Non Taxable</td>
+    
+</tr>
+<tr style="background-color: lightgreen;">
+<td>13. Horticultural Exp</td>
+      
+<td>
+<input type="number" id="HorticulturalExp-input" name="Horticultural Exp" value="0" step="0.01">
+
+</td>
+     
+ <td>00</td>
+      
+<td>Non Taxable</td>
+    
+</tr>
+<tr style="background-color: lightgreen;">
+<td>14. Others NAD</td>
+      
+<td>
+<input type="number" id="OthersNAD-input" name="Others NAD" value="0" step="0.01">
+</td>
+     
+ <td>00</td>
+      
+<td>Non Taxable</td>
+    
+</tr>
+<tr style="background-color: lightgreen;">
+<td>Total Allowable Deductions</td>
+      
+<td>00</td>
+     
+ <td>
+<input type="number" id="TotalAllowableDeductions-input" name="Total Allowable Deductions" autocomplete="on" oninput="calculateChargeableIncome()" value="0" step="0.01" readonly/>
+</td>
+      
+<td></td>
+    
+</tr>
+<td>15. Chargeable Income</td>
+      
+<td>00</td>
+
+<td>
+ <input type="number" id="ChargeableIncome-input" name="Chargeable Income" value="0" step="0.01" min="0" oninput="calculateAdjustedChargeableIncome()" readonly> 
+   <td>     
+<td></td>
+    
+</tr>
+<tr style="background-color: lightgreen;">
+<td>Less: Loss B/f</td>
+      
+<td>
+<input type="number" id="LossBf-input" name="Loss B/f" value="0" step="0.01" oninput="calculateAdjustedChargeableIncome()">
+</td>
+     
+ <td>00</td>
+      
+<td></td>
+    
+</tr>
+<td>16. Adjusted Chargeable Income</td>
+      
+<td>
+00</td>
+     
+ <td>
+<input type="number" id="AdjustedChargeableIncome-input" name="Adjusted Chargeable Income" value="0" step="0.01" oninput="calculate30PercentCooperationTax()" readonly> 
+ </td>
+      
+<td></td>
+    
+</tr>
+<tr>
+<td>17. 30% Cooperation Tax</td>
+      
+<td>
+00</td>
+     
+ <td>
+<input type="number" id="CooperationTax-input" name="30% Cooperation Tax" value="0" step="0.01" readonly> 
+        </td>
+      
+<td></td>
+    
+</tr>
+<tr style="background-color: lightgreen;">
+<td>Less:Tax Over/Under Payment</td>
+      
+<td></td>
+     
+ <td></td>
+      
+<td></td>
+    
+</tr>
+<tr style="background-color: lightgreen;">
+<td>18. WHT Paid</td>
+      
+<td>
+<input type="number" id="WHTPaid-input" name="WHTPaid" value="0" step="0.01">
+</td>
+     
+ <td>00</td>
+      
+<td></td>
+    
+</tr>
+<tr style="background-color: lightgreen;">
+<td>19. Tax Credit</td>
+      
+<td>
+<input type="number" id="TaxCredit-input" name="TaxCredit" value="0" step="0.01">
+</td>
+     
+ <td>00</td>
+      
+<td></td>
+    
+</tr>
+<tr style="background-color: lightgreen;">
+<td>20. Provisional Tax Paid</td>
+      
+<td>
+<input type="number" id="ProvisionalTaxPaid-input" name="ProvisionalTaxPaid" value="0" step="0.01">
+</td>
+     
+ <td>00</td>
+      
+<td></td>
+    
+</tr>
+<td>21. Tax Payable/Recoverable</td>
+      
+<td>
+00
+</td>
+     
+ <td>
+<input type="number" id="TaxPayableRecoverable-Input" name="TaxPayableRecoverable" value="0" step="0.01" readonly>
+
+</td>
+      
+<td></td>
+ 
+<tr>
+  <td>Upload File</td>
+  <td>
+    <form action="/upload" method="POST" enctype="multipart/form-data">
+      <label for="file">Choose a file:</label>
+      <input type="file" id="file" name="file">
+      <br>
+      <input type="submit" value="Upload">
+    </form>
+    <!-- File preview div -->
+    <div id="file-preview" style="border:1px solid #000; padding:10px; background-color:#fff; margin-top:10px;">
+        <strong>Uploaded file preview will appear here</strong>
+    </div>
+  </td>
+</tr>
+  
+
+ 
+<tr>
+<tr style="background-color: grey;">
+  <td>Clear table</td>
+  <td>
+    <input type="reset" value="Clear">
+  </td>
+</tr>
+<button onclick="printAsPDF()">Save as PDF</button>
+
+<script>
+function printAsPDF() {
+  // Set the page to print in landscape orientation
+  var printOptions = {
+    orientation: "landscape"
+  };
+  
+  // Print the current page as a PDF
+  window.print();
+}
+</script>
+
+</table>
+ 
+//Net Profit Before Tax
+ <script>
+      var netprofitInput = document.getElementById('net-profit-input');
+      var netprofit2Input = document.getElementById('net-profit2-input');
+
+      netprofitInput.addEventListener('input', function() {
+        var inputValue = netprofitInput.value;
+        netprofit2Input.value = inputValue;
+      });
+    </script>
+//Non Allowable Deductions
+<script>
+      var TotalNonAllowableDeductionsInput = document.getElementById('TotalNonAllowableDeductions-input');
+      var inputFields = document.querySelectorAll('#Donations-input, #Others-input, #Depreciation-input, #Bribes-input, #Penalties-input, #GiftsAndOffers-input');
+
+      inputFields.forEach(function(inputField) {
+        inputField.addEventListener('input', function() {
+          var total = 0;
+          inputFields.forEach(function(inputField) {
+            total += parseFloat(inputField.value) || 0;
+          });
+          TotalNonAllowableDeductionsInput.value = total.toFixed(2);
+        });
+      });
+    </script>
+
+//Adjusted Net Profit
+<script>
+      var AdjustedNetProfitBeforeTaxinput = document.getElementById('AdjustedNetProfitBeforeTax-input');
+      var inputFields = document.querySelectorAll('#Donations-input, #Others-input, #Depreciation-input, #Bribes-input, #Penalties-input, #GiftsAndOffers-input');
+      var netProfit = document.getElementById('net-profit2-input'); // define netProfit variable
+
+      inputFields.forEach(function(inputField) {
+        inputField.addEventListener('input', function() {
+          var total = 0;
+          inputFields.forEach(function(inputField) {
+            total += parseFloat(inputField.value) || 0;
+          });
+          AdjustedNetProfitBeforeTaxinput.value = (netProfit.value - -total).toFixed(2);
+        });
+      });
+    </script>
+ //Total Allowable Deductions
+<script>
+  // Get the input fields
+  const TotalWearAndTearInput = document.getElementById("TotalWearAndTear2-input");
+  const startupCostsInput = document.getElementById("25%StartupCosts-input");
+  const industrialBuildInput = document.getElementById("5%IndustrialBuildingDeduction-input");
+  const initialBuildInput = document.getElementById("20%InitialBuildingAllowance-input");
+  const othersNADInput = document.getElementById("OthersNAD-input");
+  const horticulturalExpInput = document.getElementById("HorticulturalExp-input");
+  const totalAllowableDeductionsInput = document.getElementById("TotalAllowableDeductions-input");
+
+  // Add event listeners to input fields
+  TotalWearAndTearInput.addEventListener("input", updateTotalAllowableDeductions);
+  startupCostsInput.addEventListener("input", updateTotalAllowableDeductions);
+  industrialBuildInput.addEventListener("input", updateTotalAllowableDeductions);
+  initialBuildInput.addEventListener("input", updateTotalAllowableDeductions);
+  othersNADInput.addEventListener("input", updateTotalAllowableDeductions);
+  horticulturalExpInput.addEventListener("input", updateTotalAllowableDeductions);
+
+  // Function to update total allowable deductions
+  function updateTotalAllowableDeductions() {
+    const TotalWearAndTear = parseFloat(TotalWearAndTearInput.value) || 0;
+    const othersNAD = parseFloat(othersNADInput.value) || 0;
+    const initialBuild = parseFloat(initialBuildInput.value)  || 0;
+    const industrialBuild = parseFloat(industrialBuildInput.value) || 0;
+    const startupCosts = parseFloat(startupCostsInput.value) || 0;
+    const horticulturalExp = parseFloat(horticulturalExpInput.value) || 0;
+    const totalAllowableDeductions = TotalWearAndTear + industrialBuild + othersNAD + initialBuild + startupCosts + horticulturalExp;
+
+    totalAllowableDeductionsInput.value = totalAllowableDeductions.toFixed(2);
+  }
+</script>
+
+//15.Chargeable Income
+<script>
+  var chargeableIncome = document.getElementById("ChargeableIncome-input");
+  var inputFields = document.querySelectorAll('#Donations-input, #Others-input, #Depreciation-input, #Bribes-input, #Penalties-input, #GiftsAndOffers-input');
+    var netProfit = document.getElementById('net-profit2-input');
+
+        inputFields.forEach(function(inputField) {
+        inputField.addEventListener('input', function() {
+          var total = 0;
+          inputFields.forEach(function(inputField) {
+            total += parseFloat(inputField.value) || 0;
+          });
+
+           // Get the input fields
+  const TotalWearAndTearInput = document.getElementById("TotalWearAndTear2-input");
+  const startupCostsInput = document.getElementById("25%StartupCosts-input");
+  const industrialBuildInput = document.getElementById("5%IndustrialBuildingDeduction-input");
+  const initialBuildInput = document.getElementById("20%InitialBuildingAllowance-input");
+  const othersNADInput = document.getElementById("OthersNAD-input");
+  const horticulturalExpInput = document.getElementById("HorticulturalExp-input");
+  const totalAllowableDeductionsInput = document.getElementById("TotalAllowableDeductions-input");
+
+  // Add event listeners to input fields
+  TotalWearAndTearInput.addEventListener("input", updateTotalAllowableDeductions);
+  startupCostsInput.addEventListener("input", updateTotalAllowableDeductions);
+  industrialBuildInput.addEventListener("input", updateTotalAllowableDeductions);
+  initialBuildInput.addEventListener("input", updateTotalAllowableDeductions);
+  othersNADInput.addEventListener("input", updateTotalAllowableDeductions);
+  horticulturalExpInput.addEventListener("input", updateTotalAllowableDeductions);
+
+  // Function to update total allowable deductions
+  function updateTotalAllowableDeductions() {
+    const TotalWearAndTear = parseFloat(TotalWearAndTearInput.value) || 0;
+    const othersNAD = parseFloat(othersNADInput.value) || 0;
+    const initialBuild = parseFloat(initialBuildInput.value)  || 0;
+    const industrialBuild = parseFloat(industrialBuildInput.value) || 0;
+    const startupCosts = parseFloat(startupCostsInput.value) || 0;
+    const horticulturalExp = parseFloat(horticulturalExpInput.value) || 0;
+    const totalAllowableDeductions = TotalWearAndTear + industrialBuild + othersNAD + initialBuild + startupCosts + horticulturalExp;
+
+    chargeableIncome.value = -(totalAllowableDeductions.toFixed(2)-(netProfit.value - -total).toFixed(2));
+  }
+
+        });
+      });
+</script>
+
+<script>
+
+//16.Adjusted Chargeable Income    
+        function calculateAdjustedChargeableIncome() {
+        let chargeableIncome = parseFloat(document.querySelector('#ChargeableIncome-input').value);
+        let lossBf = parseFloat(document.querySelector('#LossBf-input').value);
+        let adjustedChargeableIncome = chargeableIncome - lossBf;
+        document.querySelector('#AdjustedChargeableIncome-input').value = adjustedChargeableIncome.toFixed(2);
+      }
+           
+      // call calculateAdjustedChargeableIncome function on page load to set the initial value of Adjusted Chargeable Income
+      calculateAdjustedChargeableIncome();
+
+    </script>
+
+    <script>
+  // 17. 30% Cooperation Tax
+  function calculate30PercentCooperationTax() {
+    var adjustedChargeableIncome = parseFloat(document.getElementById('AdjustedChargeableIncome-input').value);
+    
+    // Check if adjustedChargeableIncome is greater than 0
+    if (adjustedChargeableIncome > 0) {
+      var cooperationTax = (adjustedChargeableIncome * 0.3).toFixed(2);
+    } else {
+      // If adjustedChargeableIncome is not greater than 0, set cooperationTax to 0
+      var cooperationTax = 0;
+    }
+
+    var cooperationTaxInput = document.getElementById('CooperationTax-input');
+    cooperationTaxInput.value = cooperationTax;
+  }
+
+  calculate30PercentCooperationTax();
+
+  let adjustedChargeableIncomeInput = document.querySelector('#AdjustedChargeableIncome-input');
+  adjustedChargeableIncomeInput.addEventListener('keyup', function() {
+    calculate30PercentCooperationTax();
+  });
+</script>
+
+
+  <script>
+      const cooperationTaxInput = document.getElementById("CooperationTax-input");
+      const WHTPaidInput = document.getElementById("WHTPaid-input");
+      const taxCreditInput = document.getElementById("TaxCredit-input");
+      const provisionalTaxPaidInput = document.getElementById("ProvisionalTaxPaid-input");
+      const taxPayableRecoverableInput = document.getElementById("TaxPayableRecoverable-Input");
+
+      function updatePayableRecoverable() {
+        const cooperationTax = parseFloat(cooperationTaxInput.value) || 0;
+        const WHTPaid = parseFloat(WHTPaidInput.value) || 0;
+        const taxCredit = parseFloat(taxCreditInput.value)  || 0;
+        const ProvisionalTaxPaid = parseFloat(provisionalTaxPaidInput.value) || 0;
+        const TaxPayableRecoverable = cooperationTax - WHTPaid - taxCredit - ProvisionalTaxPaid;
+        taxPayableRecoverableInput.value = TaxPayableRecoverable.toFixed(2);
+      }
+      cooperationTaxInput.addEventListener("input", updatePayableRecoverable);
+      WHTPaidInput.addEventListener("input", updatePayableRecoverable);
+      taxCreditInput.addEventListener("input", updatePayableRecoverable);
+      provisionalTaxPaidInput.addEventListener("input", updatePayableRecoverable);
+    </script>
+<script>
+var Name = document.getElementById("Name").value;
+
+localStorage.setItem("Name", Name);
+
+document.getElementById("Name").value = localStorage.getItem("Name");
+</script>
+<script>
+document.getElementById('file').addEventListener('change', function() {
+    const preview = document.getElementById('file-preview');
+    const file = this.files[0];
+    
+    if (!file) {
+        preview.innerHTML = "<strong>No file selected</strong>";
+        return;
+    }
+
+    const reader = new FileReader();
+
+    reader.onload = function(e) {
+        const fileURL = e.target.result;
+        const fileType = file.type;
+
+        // Display images
+        if (fileType.startsWith('image/')) {
+            preview.innerHTML = `<img src="${fileURL}" style="max-width:100%; height:auto;">`;
+        }
+        // Display PDFs
+        else if (fileType === 'application/pdf') {
+            preview.innerHTML = `<iframe src="${fileURL}" width="100%" height="500px"></iframe>`;
+        }
+        // Otherwise show file name
+        else {
+            preview.innerHTML = `<p>File uploaded: ${file.name}</p>`;
+        }
+    }
+
+    reader.readAsDataURL(file);
+});
+</script>
+
+
+<footer></footer>
+
+</body>
+
+</form>
+
+</html>
+

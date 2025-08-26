@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>All Tax Records</title>
+    <style>
+        body { font-family: Arial; background-color: #f5f5f5; padding: 20px; }
+        table { border-collapse: collapse; width: 90%; margin-top: 20px; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #333; color: white; }
+        tr:nth-child(even) { background-color: #f2f2f2; }
+    </style>
+</head>
+<body>
+    <h1>All Tax Records</h1>
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>Firm Name</th>
+            <th>Net Profit</th>
+            <th>Tax Rate</th>
+            <th>Tax Amount</th>
+        </tr>
+        {% for record in records %}
+        <tr>
+            <td>{{ record[0] }}</td>
+            <td>{{ record[1] }}</td>
+            <td>{{ "%.2f"|format(record[2]) }} UGX</td>
+            <td>{{ "%.2f"|format(record[3]) }} %</td>
+            <td>{{ "%.2f"|format(record[4]) }} UGX</td>
+        </tr>
+        {% endfor %}
+    </table>
+    <br>
+    <a href="/">Go Back</a>
+</body>
+</html>

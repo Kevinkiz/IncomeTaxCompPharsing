@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Income Tax Computation</title>
+    <style>
+        body {
+            background-color: lightblue;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+        table {
+            background-color: Orange;
+            border-collapse: collapse;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+        th {
+            background-color: #2c3e50;
+            color: white;
+        }
+        input[type="number"], input[type="text"], input[type="date"] {
+            width: 90%;
+            padding: 5px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .upload-section {
+            background: #e8f4fc;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            border: 1px dashed #3498db;
+        }
+        .auto-fill-status {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 4px;
+            display: none;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .processing {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeeba;
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .highlight {
+            background-color: #fff3cd;
+            transition: background-color 0.5s ease;
+        }
+        .file-info {
+            margin-top: 10px;
+            font-style: italic;
+            color: #7f8c8d;
+            font-size: 14px;
+        }
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        .action-buttons {
+            margin-top: 20px;
+            text-align: center;
+        }
+        .formatted-number {
+            text-align: right;
+        }
+        .calc-btn {
+            padding: 3px 8px;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Income Tax Computation</h1>
+
+    <div class="upload-section">
+        <h3>Upload Financial Document for Auto-Fill</h3>
+        <input type="file" id="document-upload" accept=".pdf,.docx,.xlsx,.xls,.txt,.csv">
+        <div class="file-info">Supported formats: PDF, Word, Excel, Text files</div>
+        
+        <div id="auto-fill-status" class="auto-fill-status"></div>
+    </div>
+
+    <form id="myForm" action="/compute" method="POST" enctype="multipart/form-data">
+        <table border="1">
+            <tr>
+                <td>Name</td>
+                <td>
+                    <input type="text" id="FirmName-input" name="FirmName" value="N/A">
+                </td>
+            </tr>
+            <tr>
+                <td>Date</td>
+                <td>
+                    <input type="date" id="Date_Period-input" name="Date_Period" value="N/A">
+                </td>
+            </tr>
+        </table>
+
+        <table border="1">
+            <tr>
+                <th>DETAILS</th>
+                <th>AMOUNT (UGX)</th>
+                <th>Net AMOUNT (UGX)</th>
+                <th>Tax Treatment</th>
+            </tr>
+            <tr>
+                <td>1. Net Profit Before Tax</td>
+                <td>
+                    <input type="text" id="net-profit-input" name="net_profit" value="0" class="formatted-number">
+                </td>
+                <td>
+                    <input type="text" id="net-profit2-input" name="net_profit2" value="0" class="formatted-number" readonly>
+                </td>
+                <td>Taxable</td>
+            </tr>
+            <tr style="background-color: pink;">
+                <td>Add: Non Allowable Deductions</td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr style="background-color: pink;">
+                <td>2. Depreciation</td>
+                <td>
+                    <input type="text" id="Depreciation-input" name="Depreciation" value="0" class="formatted-number">
+                </td>
+                <td>00</td>
+                <td>Taxable</td>
+            </tr>
+            <tr style="background-color: pink;">
+                <td>3. Bribes</td>
+                <td>
+                    <input type="text" id="Bribes-input" name="Bribes" value="0" class="formatted-number">
+                </td>
+                <td>00</td>
+                <td>Taxable</td>
+            </tr>
+            <tr style="background-color: pink;">
+                <td>4. Penalties</td>
+                <td>
+                    <input type="text" id="Penalties-input" name="Penalties" value="0" class="formatted-number">
+                </td>
+                <td>00</td>
+                <td>Taxable</td>
+            </tr>
+            <tr style="background-color: pink;">
+                <td>5. Gifts & Offers</td>
+                <td>
+                    <input type="text" id="GiftsAndOffers-input" name="Gifts & Offers" value="0" class="formatted-number">
+                </td>
+                <td>00</td>
+                <td>Taxable</td>
+            </tr>
+            <tr style="background-color: pink;">
+                <td>6. Donations</td>
+                <td>
+                    <input type="text" id="Donations-input" name="Donations" value="0" class="formatted-number">
+                </td>
+                <td>00</td>
+                <td>Taxable</td>
+            </tr>
+            <tr style="background-color: pink;">
+                <td>7. Others</td>
+                <td>
+                    <input type="text" id="Others-input" name="Others" value="0" class="formatted-number">
+                </td>
+                <td>00</td>
+                <td>Taxable</td>
+            </tr>
+            <tr style="background-color: pink;">
+                <td>Total Non Allowable Deductions</td>
+                <td>00</td>
+                <td>
+                    <input type="text" id="TotalNonAllowableDeductions-input" name="Total Non Allowable Deductions" value="0" class="formatted-number" readonly>
+                </td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>8. Adjusted Net Profit Before Tax</td>
+                <td>00</td>
+                <td>
+                    <input type="text" id="AdjustedNetProfitBeforeTax-input" name="Adjusted Net Profit Before Tax" value="0" class="formatted-number" readonly/>
+                </td>
+                <td></td>
+            </tr>
+            <tr style="background-color: lightgreen;">
+                <td>Less:Allowable Deductions</td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr style="background-color: lightgreen;">
+                <td>9. Wear & Tear</td>
+                <td>
+                    <input type="text" id="TotalWearAndTear2-input" name="Total Wear & Tear2" value="0" class="formatted-number" readonly>
+                </td>
+                <td>
+                    <input type="button" value="Calculate" onclick="calculateTotalWearAndTear()" class="calc-btn">
+                </td>
+                <td>Non Taxable</td>
+            </tr>
+        </table>
+
+        <table border="1">
+            <tr style="background-color: yellow;">
+                <th>DETAILS</th>
+                <th>40%</th>
+                <th>30%</th>
+                <th>20%</th>
+                <th>Total</th>
+            </tr>
+            <tr style="background-color: yellow;">
+                <td>i. Computers,Data & Software</td>
+                <td>
+                    <input type="text" id="ComputersDataSoftware-input" name="Computers,Data & Software" value="0" class="formatted-number">
+                </td>
+                <td>
+                    <input type="button" value="Calculate" onclick="calculateComputerWearTear()" class="calc-btn">
+                </td>
+                <td>Non Taxable</td>
+                <td>
+                    <input type="text" id="CalculateComputerWearTear-input" name="Calculate Computer Wear & Tear" value="0" class="formatted-number" readonly>
+                </td>
+            </tr>
+            <tr style="background-color: yellow;">
+                <td>ii. Plant & Machinery(Farming,Mining,Manufacture)</td>
+                <td>Non Taxable</td>
+                <td>
+                    <input type="text" id="PlantMachinery-input" name="Plant & Machinery(Farming,Mining,Manufacture)" value="0" class="formatted-number">
+                </td>
+                <td>
+                    <input type="button" value="Calculate" onclick="calculatePlantWearTear()" class="calc-btn">
+                </td>
+                <td>
+                    <input type="text" id="CalculatePlantWearTear-input" name="Calculate Plant Wear & Tear" value="0" class="formatted-number" readonly>
+                </td>
+            </tr>
+            <tr style="background-color: yellow;">
+                <td>iii. Automobiles<=60Million</td>
+                <td>Non Taxable</td>
+                <td>
+                    <input type="button" value="Calculate" onclick="calculateAutomobileWearTear()" class="calc-btn">
+                </td>
+                <td>
+                    <input type="text" id="Automobiles-input" name="Automobiles<=60Million" value="0" max="60000000" class="formatted-number">
+                </td>
+                <td>
+                    <input type="text" id="CalculateAutomobileWearTear-input" name="Calculate Automobile Wear & Tear" value="0" class="formatted-number" readonly>
+                </td>
+            </tr>
+            <tr style="background-color: yellow;">
+                <td>iv. Others not in any Class</td>
+                <td>Non Taxable</td>
+                <td>
+                    <input type="button" value="Calculate" onclick="calculateOthersWearTear()" class="calc-btn">
+                </td>
+                <td>
+                    <input type="text" id="OthersNotInClass-input" name="Others not in any Class" value="0" class="formatted-number">
+                </td>
+                <td>
+                    <input type="text" id="CalculateOthersWearTear-input" name="Calculate Others Wear & Tear" value="0" class="formatted-number" readonly>
+                </td>
+            </tr>
+            <tr style="background-color: yellow;">
+                <td>v. Total Wear & Tear</td>
+                <td>
+                    <input type="button" value="Calculate" onclick="calculateTotalWearTear()" class="calc-btn">
+                </td>
+                <td>00</td>
+                <td>00</td>
+                <td>
+                    <input type="text" id="TotalWearAndTear-input" name="Total Wear & Tear" value="0" class="formatted-number" readonly>
+                </td>
+            </tr>
+        </table>
+
+        <table border="1">
+            <tr style="background-color: lightgreen;">
+                <td>10. 25% Start up Costs</td>
+                <td>
+                    <input type="text" id="StartupCosts-input" name="25% Start up Costs" value="0" class="formatted-number">
+                </td>
+                <td>00</td>
+                <td>Non Taxable</td>
+            </tr>
+            <tr style="background-color: lightgreen;">
+                <td>11. 5% Industrial Building Deduction</td>
+                <td>
+                    <input type="text" id="IndustrialBuildingDeduction-input" name="5% Industrial Building Deduction" value="0" class="formatted-number">
+                </td>
+                <td>00</td>
+                <td>Non Taxable</td>
+            </tr>
+            <tr style="background-color: lightgreen;">
+                <td>12. 20% Initial Building Allowance</td>
+                <td>
+                    <input type="text" id="InitialBuildingAllowance-input" name="20% Initial Building Allowance" value="0" class="formatted-number">
+                </td>
+                <td>00</td>
+                <td>Non Taxable</td>
+            </tr>
+            <tr style="background-color: lightgreen;">
+                <td>13. Horticultural Exp</td>
+                <td>
+                    <input type="text" id="HorticulturalExp-input" name="Horticultural Exp" value="0" class="formatted-number">
+                </td>
+                <td>00</td>
+                <td>Non Taxable</td>
+            </tr>
+            <tr style="background-color: lightgreen;">
+                <td>14. Others NAD</td>
+                <td>
+                    <input type="text" id="OthersNAD-input" name="Others NAD" value="0" class="formatted-number">
+                </td>
+                <td>00</td>
+                <td>Non Taxable</td>
+            </tr>
+            <tr style="background-color: lightgreen;">
+                <td>Total Allowable Deductions</td>
+                <td>00</td>
+                <td>
+                    <input type="text" id="TotalAllowableDeductions-input" name="Total Allowable Deductions" value="0" class="formatted-number" readonly/>
+                </td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>15. Chargeable Income</td>
+                <td>00</td>
+                <td>
+                    <input type="text" id="ChargeableIncome-input" name="Chargeable Income" value="0" class="formatted-number" readonly> 
+                </td>
+                <td></td>
+            </tr>
+            <tr style="background-color: lightgreen;">
+                <td>Less: Loss B/f</td>
+                <td>
+                    <input type="text" id="LossBf-input" name="Loss B/f" value="0" class="formatted-number">
+                </td>
+                <td>00</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>16. Adjusted Chargeable Income</td>
+                <td>00</td>
+                <td>
+                    <input type="text" id="AdjustedChargeableIncome-input" name="Adjusted Chargeable Income" value="0" class="formatted-number" readonly> 
+                </td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>17. 30% Cooperation Tax</td>
+                <td>00</td>
+                <td>
+                    <input type="text" id="CooperationTax-input" name="30% Cooperation Tax" value="0" class="formatted-number" readonly> 
+                </td>
+                <td></td>
+            </tr>
+            <tr style="background-color: lightgreen;">
+                <td>Less:Tax Over/Under Payment</td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr style="background-color: lightgreen;">
+                <td>18. WHT Paid</td>
+                <td>
+                    <input type="text" id="WHTPaid-input" name="WHTPaid" value="0" class="formatted-number">
+                </td>
+                <td>00</td>
+                <td></td>
+            </tr>
+            <tr style="background-color: lightgreen;">
+                <td>19. Tax Credit</td>
+                <td>
+                    <input type="text" id="TaxCredit-input" name="TaxCredit" value="0" class="formatted-number">
+                </td>
+                <td>00</td>
+                <td></td>
+            </tr>
+            <tr style="background-color: lightgreen;">
+                <td>20. Provisional Tax Paid</td>
+                <td>
+                    <input type="text" id="ProvisionalTaxPaid-input" name="ProvisionalTaxPaid" value="0" class="formatted-number">
+                </td>
+                <td>00</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>21. Tax Payable/Recoverable</td>
+                <td>00</td>
+                <td>
+                    <input type="text" id="TaxPayableRecoverable-Input" name="TaxPayableRecoverable" value="0" class="formatted-number" readonly>
+                </td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>Upload File</td>
+                <td colspan="3">
+                    <label for="file">Choose a file:</label>
+                    <input type="file" id="file" name="file">
+                    <!-- File preview div -->
+                    <div id="file-preview" style="border:1px solid #000; padding:10px; background-color:#fff; margin-top:10px;">
+                        <strong>Uploaded file preview will appear here</strong>
+                    </div>
+                </td>
+            </tr>
+            <tr style="background-color: grey;">
+                <td>Clear table</td>
+                <td colspan="3">
+                    <input type="reset" value="Clear" onclick="resetForm()">
+                </td>
+            </tr>
+        </table>
+
+        <div class="action-buttons">
+            <button type="submit">Calculate Tax</button>
+            <button type="button" onclick="printAsPDF()">Save as PDF</button>
+        </div>
+    </form>
+
+    <!-- Load necessary libraries for document processing -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.4.17/mammoth.browser.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+    <script>
+        // Utility functions for number formatting
+        function formatNumber(value) {
+            if (!value && value !== 0) return "0";
+            return parseFloat(value).toLocaleString('en-US', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+        }
+        
+        function parseFormattedNumber(value) {
+            if (!value) return 0;
+            return parseFloat(value.replace(/,/g, ''));
+        }
+        
+        // Initialize all values on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            // Format all number inputs
+            document.querySelectorAll('input[type="text"].formatted-number').forEach(input => {
+                if (input.value && input.value !== "N/A") {
+                    input.value = formatNumber(input.value);
+                }
+            });
+            
+            // Set today's date as default
+            const today = new Date().toISOString().substr(0, 10);
+            document.getElementById('Date_Period-input').value = today;
+            
+            // Calculate initial values
+            calculateAll();
+        });
+
+        // Add event listeners to format numbers on input
+        document.querySelectorAll('input[type="text"].formatted-number').forEach(input => {
+            input.addEventListener('blur', function() {
+                this.value = formatNumber(parseFormattedNumber(this.value));
+                // Trigger calculations when numbers change
+                calculateAll();
+            });
+            
+            input.addEventListener('focus', function() {
+                this.value = parseFormattedNumber(this.value) || '';
+            });
+        });
+
+        // Net Profit Before Tax
+        var netprofitInput = document.getElementById('net-profit-input');
+        var netprofit2Input = document.getElementById('net-profit2-input');
+
+        netprofitInput.addEventListener('input', function() {
+            var inputValue = parseFormattedNumber(netprofitInput.value) || 0;
+            netprofit2Input.value = formatNumber(inputValue);
+            calculateAll();
+        });
+
+        // Non Allowable Deductions
+        var TotalNonAllowableDeductionsInput = document.getElementById('TotalNonAllowableDeductions-input');
+        var inputFields = document.querySelectorAll('#Donations-input, #Others-input, #Depreciation-input, #Bribes-input, #Penalties-input, #GiftsAndOffers-input');
+
+        inputFields.forEach(function(inputField) {
+            inputField.addEventListener('input', function() {
+                var total = 0;
+                inputFields.forEach(function(inputField) {
+                    total += parseFormattedNumber(inputField.value) || 0;
+                });
+                TotalNonAllowableDeductionsInput.value = formatNumber(total);
+                calculateAll();
+            });
+        });
+
+        // Adjusted Net Profit
+        var AdjustedNetProfitBeforeTaxinput = document.getElementById('AdjustedNetProfitBeforeTax-input');
+        var netProfit = document.getElementById('net-profit2-input');
+
+        function updateAdjustedNetProfit() {
+            var totalNonAllowable = 0;
+            inputFields.forEach(function(inputField) {
+                totalNonAllowable += parseFormattedNumber(inputField.value) || 0;
+            });
+            
+            var netProfitValue = parseFormattedNumber(netProfit.value) || 0;
+            AdjustedNetProfitBeforeTaxinput.value = formatNumber(netProfitValue + totalNonAllowable);
+        }
+
+        // Total Allowable Deductions
+        const TotalWearAndTearInput = document.getElementById("TotalWearAndTear2-input");
+        const startupCostsInput = document.getElementById("StartupCosts-input");
+        const industrialBuildInput = document.getElementById("IndustrialBuildingDeduction-input");
+        const initialBuildInput = document.getElementById("InitialBuildingAllowance-input");
+        const othersNADInput = document.getElementById("OthersNAD-input");
+        const horticulturalExpInput = document.getElementById("HorticulturalExp-input");
+        const totalAllowableDeductionsInput = document.getElementById("TotalAllowableDeductions-input");
+
+        // Add event listeners to input fields
+        [startupCostsInput, industrialBuildInput, initialBuildInput, othersNADInput, horticulturalExpInput].forEach(input => {
+            input.addEventListener('input', function() {
+                calculateAll();
+            });
+        });
+
+        // Function to update total allowable deductions
+        function updateTotalAllowableDeductions() {
+            const TotalWearAndTear = parseFormattedNumber(TotalWearAndTearInput.value) || 0;
+            const othersNAD = parseFormattedNumber(othersNADInput.value) || 0;
+            const initialBuild = parseFormattedNumber(initialBuildInput.value)  || 0;
+            const industrialBuild = parseFormattedNumber(industrialBuildInput.value) || 0;
+            const startupCosts = parseFormattedNumber(startupCostsInput.value) || 0;
+            const horticulturalExp = parseFormattedNumber(horticulturalExpInput.value) || 0;
+            const totalAllowableDeductions = TotalWearAndTear + industrialBuild + othersNAD + initialBuild + startupCosts + horticulturalExp;
+
+            totalAllowableDeductionsInput.value = formatNumber(totalAllowableDeductions);
+        }
+
+        // 15.Chargeable Income
+        var chargeableIncome = document.getElementById("ChargeableIncome-input");
+        
+        function updateChargeableIncome() {
+            var totalNonAllowable = 0;
+            inputFields.forEach(function(inputField) {
+                totalNonAllowable += parseFormattedNumber(inputField.value) || 0;
+            });
+            
+            const totalAllowableDeductions = parseFormattedNumber(totalAllowableDeductionsInput.value) || 0;
+            const netProfitValue = parseFormattedNumber(netProfit.value) || 0;
+            
+            chargeableIncome.value = formatNumber(netProfitValue + totalNonAllowable - totalAllowableDeductions);
+        }
+
+        // 16.Adjusted Chargeable Income    
+        function calculateAdjustedChargeableIncome() {
+            let chargeableIncomeValue = parseFormattedNumber(document.getElementById('ChargeableIncome-input').value) || 0;
+            let lossBf = parseFormattedNumber(document.getElementById('LossBf-input').value) || 0;
+            let adjustedChargeableIncome = chargeableIncomeValue - lossBf;
+            document.getElementById('AdjustedChargeableIncome-input').value = formatNumber(Math.max(0, adjustedChargeableIncome));
+        }
+        
+        // 17. 30% Cooperation Tax
+        function calculate30PercentCooperationTax() {
+            var adjustedChargeableIncome = parseFormattedNumber(document.getElementById('AdjustedChargeableIncome-input').value) || 0;
+            
+            // Check if adjustedChargeableIncome is greater than 0
+            var cooperationTax = 0;
+            if (adjustedChargeableIncome > 0) {
+                cooperationTax = adjustedChargeableIncome * 0.3;
+            }
+
+            var cooperationTaxInput = document.getElementById('CooperationTax-input');
+            cooperationTaxInput.value = formatNumber(cooperationTax);
+        }
+
+        // Tax Payable/Recoverable
+        const cooperationTaxInput = document.getElementById("CooperationTax-input");
+        const WHTPaidInput = document.getElementById("WHTPaid-input");
+        const taxCreditInput = document.getElementById("TaxCredit-input");
+        const provisionalTaxPaidInput = document.getElementById("ProvisionalTaxPaid-input");
+        const taxPayableRecoverableInput = document.getElementById("TaxPayableRecoverable-Input");
+
+        function updatePayableRecoverable() {
+            const cooperationTax = parseFormattedNumber(cooperationTaxInput.value) || 0;
+            const WHTPaid = parseFormattedNumber(WHTPaidInput.value) || 0;
+            const taxCredit = parseFormattedNumber(taxCreditInput.value)  || 0;
+            const ProvisionalTaxPaid = parseFormattedNumber(provisionalTaxPaidInput.value) || 0;
+            const TaxPayableRecoverable = cooperationTax - WHTPaid - taxCredit - ProvisionalTaxPaid;
+            taxPayableRecoverableInput.value = formatNumber(TaxPayableRecoverable);
+        }
+        
+        [WHTPaidInput, taxCreditInput, provisionalTaxPaidInput].forEach(input => {
+            input.addEventListener('input', function() {
+                updatePayableRecoverable();
+            });
+        });
+
+        // Wear and Tear Calculations
+        function calculateComputerWearTear() {
+            const computersValue = parseFormattedNumber(document.getElementById('ComputersDataSoftware-input').value) || 0;
+            document.getElementById('CalculateComputerWearTear-input').value = formatNumber(computersValue * 0.4);
+            calculateAll();
+        }
+        
+        function calculatePlantWearTear() {
+            const plantValue = parseFormattedNumber(document.getElementById('PlantMachinery-input').value) || 0;
+            document.getElementById('CalculatePlantWearTear-input').value = formatNumber(plantValue * 0.3);
+            calculateAll();
+        }
+        
+        function calculateAutomobileWearTear() {
+            const autoValue = parseFormattedNumber(document.getElementById('Automobiles-input').value) || 0;
+            document.getElementById('CalculateAutomobileWearTear-input').value = formatNumber(autoValue * 0.2);
+            calculateAll();
+        }
+        
+        function calculateOthersWearTear() {
+            const othersValue = parseFormattedNumber(document.getElementById('OthersNotInClass-input').value) || 0;
+            document.getElementById('CalculateOthersWearTear-input').value = formatNumber(othersValue * 0.2);
+            calculateAll();
+        }
+        
+        function calculateTotalWearTear() {
+            const computerWear = parseFormattedNumber(document.getElementById('CalculateComputerWearTear-input').value) || 0;
+            const plantWear = parseFormattedNumber(document.getElementById('CalculatePlantWearTear-input').value) || 0;
+            const autoWear = parseFormattedNumber(document.getElementById('CalculateAutomobileWearTear-input').value) || 0;
+            const othersWear = parseFormattedNumber(document.getElementById('CalculateOthersWearTear-input').value) || 0;
+            
+            document.getElementById('TotalWearAndTear-input').value = formatNumber(computerWear + plantWear + autoWear + othersWear);
+            calculateAll();
+        }
+        
+        function calculateTotalWearAndTear() {
+            const computersValue = parseFormattedNumber(document.getElementById('ComputersDataSoftware-input').value) || 0;
+            const plantValue = parseFormattedNumber(document.getElementById('PlantMachinery-input').value) || 0;
+            const autoValue = parseFormattedNumber(document.getElementById('Automobiles-input').value) || 0;
+            const othersValue = parseFormattedNumber(document.getElementById('OthersNotInClass-input').value) || 0;
+            
+            const totalWearTear = (computersValue * 0.4) + (plantValue * 0.3) + (autoValue * 0.2) + (othersValue * 0.2);
+            document.getElementById('TotalWearAndTear2-input').value = formatNumber(totalWearTear);
+            calculateAll();
+        }
+
+        // Master calculation function
+        function calculateAll() {
+            updateAdjustedNetProfit();
+            updateTotalAllowableDeductions();
+            updateChargeableIncome();
+            calculateAdjustedChargeableIncome();
+            calculate30PercentCooperationTax();
+            updatePayableRecoverable();
+        }
+
+        // File preview functionality
+        document.getElementById('file').addEventListener('change', function() {
+            const preview = document.getElementById('file-preview');
+            const file = this.files[0];
+            
+            if (!file) {
+                preview.innerHTML = "<strong>No file selected</strong>";
+                return;
+            }
+
+            const reader = new FileReader();
+
+            reader.onload = function(e) {
+                const fileURL = e.target.result;
+                const fileType = file.type;
+
+                // Display images
+                if (fileType.startsWith('image/')) {
+                    preview.innerHTML = `<img src="${fileURL}" style="max-width:100%; height:auto;">`;
+                }
+                // Display PDFs
+                else if (fileType === 'application/pdf') {
+                    preview.innerHTML = `<iframe src="${fileURL}" width="100%" height="500px"></iframe>`;
+                }
+                // Otherwise show file name
+                else {
+                    preview.innerHTML = `<p>File uploaded: ${file.name}</p>`;
+                }
+            }
+
+            reader.readAsDataURL(file);
+        });
+
+        // Print as PDF
+        function printAsPDF() {
+            window.print();
+        }
+        
+        // Reset form
+        function resetForm() {
+            document.querySelectorAll('input[type="text"]').forEach(input => {
+                input.value = '0';
+                input.value = formatNumber(0);
+            });
+            
+            // Reset name and date fields
+            document.getElementById('FirmName-input').value = 'N/A';
+            const today = new Date().toISOString().substr(0, 10);
+            document.getElementById('Date_Period-input').value = today;
+            
+            calculateAll();
+        }
+
+        // Document Auto-Fill System
+        document.addEventListener('DOMContentLoaded', function() {
+            const fileInput = document.getElementById('document-upload');
+            const statusDiv = document.getElementById('auto-fill-status');
+            
+            // Field mapping configuration - maps keywords to form field IDs
+            const fieldMappings = {
+                'net profit': 'net-profit-input',
+                'depreciation': 'Depreciation-input',
+                'bribes': 'Bribes-input',
+                'penalties': 'Penalties-input',
+                'gifts': 'GiftsAndOffers-input',
+                'donations': 'Donations-input',
+                'others': 'Others-input',
+                'startup': 'StartupCosts-input',
+                'industrial': 'IndustrialBuildingDeduction-input',
+                'building': 'InitialBuildingAllowance-input',
+                'horticultural': 'HorticulturalExp-input',
+                'wht': 'WHTPaid-input',
+                'tax credit': 'TaxCredit-input',
+                'provisional': 'ProvisionalTaxPaid-input',
+                'computers': 'ComputersDataSoftware-input',
+                'plant': 'PlantMachinery-input',
+                'automobile': 'Automobiles-input',
+                'other': 'OthersNotInClass-input',
+                'firm name': 'FirmName-input',
+                'company name': 'FirmName-input',
+                'period': 'Date_Period-input',
+                'date': 'Date_Period-input'
+            };
+
+            fileInput.addEventListener('change', async function(e) {
+                const file = e.target.files[0];
+                if (!file) return;
+                
+                showStatus('Processing your document...', 'processing');
+                
+                try {
+                    const text = await extractTextFromFile(file);
+                    const extractedData = parseFinancialData(text);
+                    autoFillForm(extractedData);
+                    
+                    showStatus(`Successfully auto-filled ${Object.keys(extractedData).length} fields from your document!`, 'success');
+                } catch (error) {
+                    showStatus('Error processing document: ' + error.message, 'error');
+                    console.error('Error:', error);
+                }
+            });
+
+            function showStatus(message, type) {
+                statusDiv.textContent = message;
+                statusDiv.className = 'auto-fill-status ' + type;
+                statusDiv.style.display = 'block';
+                
+                // Hide status after 5 seconds
+                setTimeout(() => {
+                    statusDiv.style.display = 'none';
+                }, 5000);
+            }
+
+            async function extractTextFromFile(file) {
+                const fileType = file.type;
+                
+                if (fileType === 'application/pdf') {
+                    return await extractTextFromPDF(file);
+                } else if (fileType === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') {
+                    return await extractTextFromWord(file);
+                } else if (fileType.includes('excel') || fileType.includes('spreadsheet')) {
+                    return await extractTextFromExcel(file);
+                } else if (fileType === 'text/plain' || fileType === 'text/csv') {
+                    return await file.text();
+                } else {
+                    throw new Error('Unsupported file type');
+                }
+            }
+
+            async function extractTextFromPDF(file) {
+                try {
+                    const arrayBuffer = await file.arrayBuffer();
+                    const pdf = await pdfjsLib.getDocument(arrayBuffer).promise;
+                    let text = '';
+
+                    for (let i = 1; i <= pdf.numPages; i++) {
+                        const page = await pdf.getPage(i);
+                        const content = await page.getTextContent();
+                        text += content.items.map(item => item.str).join(' ') + '\n';
+                    }
+
+                    return text;
+                } catch (error) {
+                    console.error('Error extracting text from PDF:', error);
+                    return '';
+                }
+            }
+
+            async function extractTextFromWord(file) {
+                try {
+                    const arrayBuffer = await file.arrayBuffer();
+                    const result = await mammoth.extractRawText({ arrayBuffer });
+                    return result.value;
+                } catch (error) {
+                    console.error('Error extracting text from Word:', error);
+                    return '';
+                }
+            }
+
+            async function extractTextFromExcel(file) {
+                try {
+                    const arrayBuffer = await file.arrayBuffer();
+                    const workbook = XLSX.read(arrayBuffer, { type: 'array' });
+                    let text = '';
+
+                    workbook.SheetNames.forEach(sheetName => {
+                        const worksheet = workbook.Sheets[sheetName];
+                        text += XLSX.utils.sheet_to_csv(worksheet) + '\n';
+                    });
+
+                    return text;
+                } catch (error) {
+                    console.error('Error extracting text from Excel:', error);
+                    return '';
+                }
+            }
+
+            function parseFinancialData(text) {
+                const data = {};
+                const lines = text.split('\n');
+                
+                // Look for financial data patterns
+                lines.forEach(line => {
+                    const lowerLine = line.toLowerCase();
+                    
+                    // Check for field matches
+                    for (const [keyword, fieldId] of Object.entries(fieldMappings)) {
+                        if (lowerLine.includes(keyword)) {
+                            // Extract numbers from the line
+                            const numbers = line.match(/[\d,]+\.?\d*/g);
+                                                        if (numbers && numbers.length > 0) {
+                                // Take the first number found in the line
+                                const numberValue = numbers[0].replace(/,/g, '');
+                                data[fieldId] = formatNumber(parseFloat(numberValue));
+                            }
+                        }
+                    }
+                });
+
+                return data;
+            }
+
+            function autoFillForm(data) {
+                for (const [fieldId, value] of Object.entries(data)) {
+                    const input = document.getElementById(fieldId);
+                    if (input) {
+                        input.value = value;
+                        input.dispatchEvent(new Event('blur')); // trigger recalculation
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
